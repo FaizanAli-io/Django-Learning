@@ -1,2 +1,2 @@
 # Django-Learning
-Django Learning project from the documentation
+Collection of Projects I built to learn django
