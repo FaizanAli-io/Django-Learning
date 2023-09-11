@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, mixins
 
 from .models import Product
 from .serializers import ProductSerializer
@@ -68,3 +68,47 @@ def all_function_view(request, pk=None, *args, **kwargs):
                 content = "created using a functional view"
             serializer.save(content=content)
         return Response(serializer.data)
+
+
+# Product Mixin View
+class ProductMixinView(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.RetrieveModelMixin,
+    generics.GenericAPIView,
+):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        if pk is not None:
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        content = serializer.validated_data.get('content')
+        if content is None:
+            content = "created using a model mixin view"
+        serializer.save(content=content)
+
+
+product_mixin_view = ProductMixinView.as_view()
+
+
+@api_view(["GET"])
+def clean_product_database(request, *args, **kwargs):
+    Product.objects.all().delete()
+    return Response(200)

@@ -19,8 +19,9 @@ def test_create_item_view():
     response = requests.post(
         endpoint,
         json={
-            "title": "testing fbv 101",
-            "price": 499,
+            "title": "hehe",
+            "content": "haha",
+            "price": 50,
         },
     )
     print(response.json())
@@ -45,14 +46,23 @@ def test_update_view():
 
 
 def test_delete_view():
-    endpoint = "http://localhost:8000/api/products/9/delete/"
+    id = int(input('ID you want to delete: '))
+    endpoint = f"http://localhost:8000/api/products/{id}/delete/"
     response = requests.delete(endpoint)
     print(response.status_code)
 
 
-test_get_list_view()
+def clean_database():
+    endpoint = "http://localhost:8000/api/products/clean/"
+    response = requests.get(endpoint)
+    print(response.status_code)
+
+
+# test_get_list_view()
 # test_get_detail_view()
 # test_create_item_view()
 # test_abnormal_view()
 # test_update_view()
 # test_delete_view()
+
+# clean_database()
