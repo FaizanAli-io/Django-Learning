@@ -1,6 +1,13 @@
 import requests
 
 
+def get_auth_token():
+    endpoint = "http://localhost:8000/api/auth/"
+    data = {'username': 'faizanali', 'password': 'hello'}
+    token = requests.post(endpoint, json=data).json()['token']
+    return {"Authorization": f"Bearer {token}"}
+
+
 def test_get_detail_view():
     endpoint = "http://localhost:8000/api/products/1/"
     response = requests.get(endpoint)
@@ -9,7 +16,11 @@ def test_get_detail_view():
 
 def test_get_list_view():
     endpoint = "http://localhost:8000/api/products/"
-    response = requests.get(endpoint)
+    auth_header = get_auth_token()
+    print(auth_header)
+
+    response = requests.get(endpoint, headers=auth_header)
+
     for item in response.json():
         print(item, '\n')
 
@@ -19,9 +30,9 @@ def test_create_item_view():
     response = requests.post(
         endpoint,
         json={
-            "title": "hehe",
-            "content": "haha",
-            "price": 50,
+            "title": "damn ok",
+            "content": "lalalalala",
+            "price": 1.99,
         },
     )
     print(response.json())
@@ -57,6 +68,8 @@ def clean_database():
     response = requests.get(endpoint)
     print(response.status_code)
 
+
+# get_auth_token()
 
 # test_get_list_view()
 # test_get_detail_view()

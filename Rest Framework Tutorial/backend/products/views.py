@@ -1,7 +1,9 @@
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, permissions, authentication
 
 from .models import Product
 from .serializers import ProductSerializer
+from .permissions import IsStaffEditorPermission
+from api.authentication import TokenAuthentication
 
 # For Function Based View
 from rest_framework.response import Response
@@ -12,6 +14,16 @@ from django.shortcuts import get_object_or_404
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+    authentication_classes = [
+        TokenAuthentication,
+        authentication.SessionAuthentication,
+    ]
+
+    permission_classes = [
+        permissions.IsAdminUser,
+        IsStaffEditorPermission,
+    ]
 
     def perform_create(self, serializer):
         content = serializer.validated_data.get('content')
