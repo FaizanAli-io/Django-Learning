@@ -1,0 +1,3 @@
+SUPERUSER:
+admin@example.com
+admin0123456789
