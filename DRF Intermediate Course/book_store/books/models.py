@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Book(models.Model):
@@ -18,7 +19,7 @@ class Comment(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE,
                              related_name="comments")
 
-    commentor = models.CharField(max_length=255)
+    commentor = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
 
     created_date = models.DateTimeField(auto_now_add=True)

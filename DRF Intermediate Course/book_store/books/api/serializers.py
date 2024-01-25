@@ -3,9 +3,12 @@ from books.models import Book, Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
+
+    commentor = serializers.StringRelatedField()
+
     class Meta:
         model = Comment
-        fields = "__all__"
+        exclude = ['book']
 
 
 class BookSerializer(serializers.ModelSerializer):
