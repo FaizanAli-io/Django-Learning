@@ -1,4 +1,5 @@
 from rest_framework.generics import (
+    ListAPIView,
     CreateAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
@@ -20,16 +21,20 @@ from books.api.permissions import (
     IsCommentOwnerOrReadOnly
 )
 
+from books.api.pagination import SmallPagination
+
 
 class BaseBook:
-    queryset = Book.objects.all()
+    queryset = Book.objects.order_by('id')
     serializer_class = BookSerializer
+    pagination_class = SmallPagination
     permission_classes = [IsAdminStaffOrReadOnly]
 
 
 class BaseComment:
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.order_by('id')
     serializer_class = CommentSerializer
+    pagination_class = SmallPagination
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 
@@ -52,6 +57,12 @@ class CommentCreateAPIView(BaseComment, CreateAPIView):
             raise ValidationError("You cannot comment more than once.")
 
         serializer.save(book_id=book_id, commentor_id=user_id)
+
+
+class CommentListAPIView(BaseComment, ListAPIView):
+
+    def get_queryset(self):
+        return self.queryset.filter(commentor=self.request.user)
 
 
 class CommentDetailAPIView(BaseComment, RetrieveUpdateDestroyAPIView):
